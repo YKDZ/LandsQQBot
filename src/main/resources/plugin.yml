@@ -1,0 +1,10 @@
+name: LandsQQBot
+version: '${version}'
+main: cn.encmys.ykdz.forest.landsqqbot.LandsQQBot
+
+author: YK_DZ
+
+api-version: '1.16'
+depend:
+  - Lands
+  - MiraiMC

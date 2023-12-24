@@ -1,0 +1,13 @@
+identifier:
+  land: "城镇"
+  area: "子区域"
+  nation: "国家"
+  player: "玩家"
+  args-separators:
+    - " "
+    - "，"
+    - ","
+  key-value-separators:
+    - "："
+    - ":"
+    - "-"
