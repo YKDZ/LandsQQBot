@@ -28,7 +28,7 @@ dependencies {
     implementation 'io.github.dreamvoid:MiraiMC-Integration:1.8.1'
 }
 
-def targetJavaVersion = 17
+def targetJavaVersion = 8
 java {
     def javaVersion = JavaVersion.toVersion(targetJavaVersion)
     sourceCompatibility = javaVersion

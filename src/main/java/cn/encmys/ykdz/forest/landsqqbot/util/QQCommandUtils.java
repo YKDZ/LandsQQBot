@@ -1,6 +1,8 @@
 package cn.encmys.ykdz.forest.landsqqbot.util;
 
 import cn.encmys.ykdz.forest.landsqqbot.LandsQQBot;
+import cn.encmys.ykdz.forest.landsqqbot.enums.QQCommandArgs;
+import cn.encmys.ykdz.forest.landsqqbot.manager.MessageConfigManager;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -9,18 +11,20 @@ import java.util.List;
 import java.util.Map;
 
 public class QQCommandUtils {
-    private static final YamlConfiguration messageConfig = LandsQQBot.getMessageConfig();
-    private static final ConfigurationSection argsSection = messageConfig.getConfigurationSection("args");
-    private static final List<String> commandIdentifiers = messageConfig.getStringList("command-identifier");
 
     public static boolean isQQCommand(String message) {
-        return commandIdentifiers.contains(Character.toString(message.charAt(0))) && !message.contains("[图片]");
+        for (String prefix : MessageConfigManager.getCommandPrefix()) {
+            if (message.startsWith(prefix)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static HashMap<QQCommandArgs, Object> parseQQCommand(String command) {
-        Map<String, Object> argsMap = argsSection.getValues(false);
-        String regexArgs = String.join("|", messageConfig.getStringList("args-separators"));
-        String regexKeyValue = String.join("|", messageConfig.getStringList("key-value-separators"));
+        Map<String, Object> argsMap = MessageConfigManager.getCommandArgsMap();
+        String regexArgs = String.join("|", MessageConfigManager.getArgsSeparators());
+        String regexKeyValue = String.join("|", MessageConfigManager.getKeyValueSeparators());
         String[] args = command.substring(1).split(regexArgs);
 
         HashMap<QQCommandArgs, Object> result = new HashMap<>();
@@ -52,22 +56,4 @@ public class QQCommandUtils {
         return null;
     }
 
-    public enum QQCommandArgs {
-        Land,
-        Player,
-        Area,
-        Nation,
-        Role,
-        Flag,
-        Action;
-
-        public static QQCommandArgs fromString(String name) {
-            for (QQCommandArgs c : QQCommandArgs.values()) {
-                if (c.name().equalsIgnoreCase(name)) {
-                    return c;
-                }
-            }
-            return null;
-        }
-    }
 }
