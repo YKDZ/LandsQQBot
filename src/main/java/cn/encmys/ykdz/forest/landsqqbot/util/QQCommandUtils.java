@@ -5,21 +5,23 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-public class StringUtils {
+public class QQCommandUtils {
     private static final YamlConfiguration messageConfig = LandsQQBot.getMessageConfig();
     private static final ConfigurationSection argsSection = messageConfig.getConfigurationSection("args");
+    private static final List<String> commandIdentifiers = messageConfig.getStringList("command-identifier");
 
     public static boolean isQQCommand(String message) {
-        return message.charAt(0) == '$' && !message.contains("[图片]");
+        return commandIdentifiers.contains(Character.toString(message.charAt(0))) && !message.contains("[图片]");
     }
 
-    public static HashMap<QQCommandArgs, Object> parseQQCommand(String message) {
+    public static HashMap<QQCommandArgs, Object> parseQQCommand(String command) {
         Map<String, Object> argsMap = argsSection.getValues(false);
         String regexArgs = String.join("|", messageConfig.getStringList("args-separators"));
         String regexKeyValue = String.join("|", messageConfig.getStringList("key-value-separators"));
-        String[] args = message.split(regexArgs);
+        String[] args = command.substring(1).split(regexArgs);
 
         HashMap<QQCommandArgs, Object> result = new HashMap<>();
         for(String arg : args) {

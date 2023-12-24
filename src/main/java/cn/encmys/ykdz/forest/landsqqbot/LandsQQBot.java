@@ -2,6 +2,7 @@ package cn.encmys.ykdz.forest.landsqqbot;
 
 import cn.encmys.ykdz.forest.landsqqbot.listener.LandsListener;
 import cn.encmys.ykdz.forest.landsqqbot.listener.MiraiListener;
+import me.angeschossen.lands.api.LandsIntegration;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -16,6 +17,7 @@ public final class LandsQQBot extends JavaPlugin {
     private static LandsQQBot plugin;
     private static YamlConfiguration config;
     private static YamlConfiguration messageConfig;
+    private static LandsIntegration landAPI = null;
 
     @Override
     public void onEnable() {
@@ -23,6 +25,7 @@ public final class LandsQQBot extends JavaPlugin {
         loadMessageConfig();
 
         plugin = this;
+        landAPI = LandsIntegration.of(plugin);
 
         Bukkit.getPluginManager().registerEvents(new LandsListener(), plugin);
         Bukkit.getPluginManager().registerEvents(new MiraiListener(), plugin);
@@ -38,6 +41,10 @@ public final class LandsQQBot extends JavaPlugin {
 
     public static YamlConfiguration getMessageConfig() {
         return messageConfig;
+    }
+
+    public static LandsIntegration getLandAPI() {
+        return landAPI;
     }
 
     public void loadMainConfig() {

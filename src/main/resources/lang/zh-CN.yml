@@ -8,10 +8,16 @@ args:
   flag: "设置"
   action: "操作"
 
+command-identifier:
+  - "$"
+  - "/"
+  - "￥"
+
 args-separators:
   - " "
   - "，"
   - ","
+
 key-value-separators:
   - "："
   - ":"
