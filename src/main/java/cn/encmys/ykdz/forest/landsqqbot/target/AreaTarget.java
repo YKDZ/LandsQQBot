@@ -3,6 +3,7 @@ package cn.encmys.ykdz.forest.landsqqbot.target;
 import cn.encmys.ykdz.forest.landsqqbot.api.target.Target;
 import cn.encmys.ykdz.forest.landsqqbot.enums.MemberType;
 import cn.encmys.ykdz.forest.landsqqbot.manager.MessageConfigManager;
+import cn.encmys.ykdz.forest.landsqqbot.util.PlayerUtils;
 import me.angeschossen.lands.api.inbox.InboxMessage;
 import me.angeschossen.lands.api.land.Area;
 import me.angeschossen.lands.api.land.Land;
@@ -54,7 +55,7 @@ public class AreaTarget implements Target {
 
     @Override
     public Object getBal() {
-        return MessageConfigManager.getMessagePlaceholder("none-balance");
+        return MessageConfigManager.getMessagePlaceholder("none-bal");
     }
 
     @Override
@@ -78,23 +79,54 @@ public class AreaTarget implements Target {
     public ArrayList<String> getInboxMessages() {
         ArrayList<String> messages = new ArrayList<>();
         List<? extends InboxMessage> inbox = getInbox();
-        for(int i = 0; i < (int) getInboxAmount(); i++) {
+        for(int i = 0; i < (int) getInboxMessageAmount(); i++) {
             messages.add(inbox.get(i).getTextWithDate(null));
         }
         return messages;
     }
 
     @Override
-    public Object getInboxAmount() {
+    public Object getInboxMessageAmount() {
         return Math.min(requiredInboxMessageAmount, getInbox().size());
     }
 
     @Override
+    public String getCapital() {
+        return Optional.ofNullable(area.getLand().getNation())
+                .map(Nation::getCapital)
+                .map(Land::getName)
+                .orElse(MessageConfigManager.getMessagePlaceholder("none-capital"));
+    }
+
+    @Override
     public String getNation() {
-        return Optional.of(area.getLand())
-                .map(Land::getNation)
+        return Optional.ofNullable(area.getLand().getNation())
                 .map(Nation::getName)
                 .orElse(MessageConfigManager.getMessagePlaceholder("none-nation"));
+    }
+
+    @Override
+    public Object getId() {
+        return MessageConfigManager.getMessagePlaceholder("none-id");
+    }
+
+    @Override
+    public String getMemberType() {
+        return MessageConfigManager.getArg(memberType.toString().toLowerCase());
+    }
+
+    @Override
+    public ArrayList<String> getMembers() {
+        switch (memberType) {
+            case PLAYER:
+                return PlayerUtils.toNameList(area.getTrustedPlayers());
+            case LAND:
+            case AREA:
+                return new ArrayList<String>() {{
+                    add(MessageConfigManager.getMessagePlaceholder("none-member"));
+                }};
+        }
+        return new ArrayList<>();
     }
 
 }

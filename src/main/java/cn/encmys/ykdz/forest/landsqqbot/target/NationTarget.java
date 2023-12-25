@@ -3,12 +3,15 @@ package cn.encmys.ykdz.forest.landsqqbot.target;
 import cn.encmys.ykdz.forest.landsqqbot.api.target.Target;
 import cn.encmys.ykdz.forest.landsqqbot.enums.MemberType;
 import cn.encmys.ykdz.forest.landsqqbot.manager.MessageConfigManager;
+import cn.encmys.ykdz.forest.landsqqbot.util.LandsUtils;
+import cn.encmys.ykdz.forest.landsqqbot.util.PlayerUtils;
 import me.angeschossen.lands.api.inbox.InboxMessage;
-import me.angeschossen.lands.api.land.Area;
+import me.angeschossen.lands.api.land.Container;
 import me.angeschossen.lands.api.nation.Nation;
 import org.bukkit.Bukkit;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class NationTarget implements Target {
@@ -45,6 +48,7 @@ public class NationTarget implements Target {
         return Bukkit.getOfflinePlayer(nation.getOwnerUID()).getName();
     }
 
+    @Override
     public Object getSize() {
         return nation.getChunksAmount();
     }
@@ -74,16 +78,50 @@ public class NationTarget implements Target {
 
     @Override
     public List<? extends InboxMessage> getInbox() {
-        return null;
+        return nation.getInbox();
     }
 
     @Override
     public ArrayList<String> getInboxMessages() {
-        return null;
+        ArrayList<String> messages = new ArrayList<>();
+        List<? extends InboxMessage> inbox = getInbox();
+        for(int i = 0; i < (int) getInboxMessageAmount(); i++) {
+            messages.add(inbox.get(i).getTextWithDate(null));
+        }
+        return messages;
     }
 
     @Override
-    public Object getInboxAmount() {
-        return null;
+    public Object getInboxMessageAmount() {
+        return Math.min(requiredInboxMessageAmount, getInbox().size());
     }
+
+    @Override
+    public String getCapital() {
+        return nation.getCapital().getName();
+    }
+
+    @Override
+    public Object getId() {
+        return nation.getId();
+    }
+
+    @Override
+    public String getMemberType() {
+        return MessageConfigManager.getArg(memberType.toString().toLowerCase());
+    }
+
+    @Override
+    public ArrayList<String> getMembers() {
+        switch (memberType) {
+            case PLAYER:
+                return PlayerUtils.toNameList(nation.getTrustedPlayers());
+            case LAND:
+                return LandsUtils.toNameList((Collection<? extends Container>) nation.getLands());
+            case AREA:
+                return LandsUtils.toNameList(nation.getCapital().getContainers());
+        }
+        return new ArrayList<>();
+    }
+
 }

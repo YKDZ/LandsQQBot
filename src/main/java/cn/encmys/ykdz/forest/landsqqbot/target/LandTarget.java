@@ -3,6 +3,8 @@ package cn.encmys.ykdz.forest.landsqqbot.target;
 import cn.encmys.ykdz.forest.landsqqbot.api.target.Target;
 import cn.encmys.ykdz.forest.landsqqbot.enums.MemberType;
 import cn.encmys.ykdz.forest.landsqqbot.manager.MessageConfigManager;
+import cn.encmys.ykdz.forest.landsqqbot.util.LandsUtils;
+import cn.encmys.ykdz.forest.landsqqbot.util.PlayerUtils;
 import me.angeschossen.lands.api.inbox.InboxMessage;
 import me.angeschossen.lands.api.land.Land;
 import me.angeschossen.lands.api.nation.Nation;
@@ -60,7 +62,7 @@ public class LandTarget implements Target {
     public int getMemberAmount() {
         switch (memberType) {
             case LAND:
-                return 0;
+                return 1;
             case AREA:
                 return land.getContainers().size();
             case PLAYER:
@@ -78,15 +80,23 @@ public class LandTarget implements Target {
     public ArrayList<String> getInboxMessages() {
         ArrayList<String> messages = new ArrayList<>();
         List<? extends InboxMessage> inbox = getInbox();
-        for(int i = 0; i < (int) getInboxAmount(); i++) {
+        for(int i = 0; i < (int) getInboxMessageAmount(); i++) {
             messages.add(inbox.get(i).getTextWithDate(null));
         }
         return messages;
     }
 
     @Override
-    public Object getInboxAmount() {
+    public Object getInboxMessageAmount() {
         return Math.min(requiredInboxMessageAmount, getInbox().size());
+    }
+
+    @Override
+    public String getCapital() {
+        return Optional.ofNullable(land.getNation())
+                .map(Nation::getCapital)
+                .map(Land::getName)
+                .orElse(MessageConfigManager.getMessagePlaceholder("none-capital"));
     }
 
     @Override
@@ -94,6 +104,31 @@ public class LandTarget implements Target {
         return Optional.ofNullable(land.getNation())
                 .map(Nation::getName)
                 .orElse(MessageConfigManager.getMessagePlaceholder("none-nation"));
+    }
+
+    @Override
+    public Object getId() {
+        return land.getId();
+    }
+
+    @Override
+    public String getMemberType() {
+        return MessageConfigManager.getArg(memberType.toString().toLowerCase());
+    }
+
+    @Override
+    public ArrayList<String> getMembers() {
+        switch (memberType) {
+            case PLAYER:
+                return PlayerUtils.toNameList(land.getTrustedPlayers());
+            case LAND:
+                return new ArrayList<String>() {{
+                    add(MessageConfigManager.getMessagePlaceholder("none-member"));
+                }};
+            case AREA:
+                return LandsUtils.toNameList(land.getContainers());
+        }
+        return new ArrayList<>();
     }
 
 }

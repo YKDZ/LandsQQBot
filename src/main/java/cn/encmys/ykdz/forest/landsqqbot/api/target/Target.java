@@ -1,6 +1,5 @@
 package cn.encmys.ykdz.forest.landsqqbot.api.target;
 
-import cn.encmys.ykdz.forest.landsqqbot.enums.MemberType;
 import me.angeschossen.lands.api.inbox.InboxMessage;
 
 import java.util.ArrayList;
@@ -16,5 +15,9 @@ public interface Target {
     int getMemberAmount();
     List<? extends InboxMessage> getInbox();
     ArrayList<String> getInboxMessages();
-    Object getInboxAmount();
+    Object getInboxMessageAmount();
+    String getCapital();
+    Object getId();
+    String getMemberType();
+    ArrayList<String> getMembers();
 }

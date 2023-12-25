@@ -1,8 +1,7 @@
 package cn.encmys.ykdz.forest.landsqqbot.action;
 
-import cn.encmys.ykdz.forest.landsqqbot.api.action.Action;
+import cn.encmys.ykdz.forest.landsqqbot.api.action.PrintAction;
 import cn.encmys.ykdz.forest.landsqqbot.api.target.Target;
-import cn.encmys.ykdz.forest.landsqqbot.enums.ActionTargets;
 import cn.encmys.ykdz.forest.landsqqbot.manager.MessageConfigManager;
 import cn.encmys.ykdz.forest.landsqqbot.target.AreaTarget;
 import cn.encmys.ykdz.forest.landsqqbot.target.LandTarget;
@@ -15,7 +14,7 @@ import me.angeschossen.lands.api.nation.Nation;
 import java.util.HashMap;
 import java.util.List;
 
-public class PrintBal {
+public class PrintBal implements PrintAction {
     private static final String messagePath = "print-bal";
     private Target target;
 
