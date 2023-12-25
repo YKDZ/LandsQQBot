@@ -1,6 +1,7 @@
 package cn.encmys.ykdz.forest.landsqqbot.manager;
 
 import cn.encmys.ykdz.forest.landsqqbot.LandsQQBot;
+import com.sun.corba.se.spi.orb.StringPair;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -40,12 +41,16 @@ public class MessageConfigManager {
         return config;
     }
 
-    public static String getMessage(String path) {
-        return config.getString("messages." + path);
+    public static List<String> getMessage(String path) {
+        return config.getStringList("messages." + path);
+    }
+
+    public static List<String> getActionMessage(String action) {
+        return config.getStringList("messages.action" + action);
     }
 
     public static String getProperNoun(String noun) {
-        return config.getString("proper-noun." + noun);
+        return config.getString("args." + noun);
     }
 
     public static List<String> getCommandPrefix() {

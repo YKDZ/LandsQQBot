@@ -6,23 +6,22 @@ import cn.encmys.ykdz.forest.landsqqbot.util.MessageUtils;
 import me.angeschossen.lands.api.land.Area;
 import me.angeschossen.lands.api.land.Land;
 import me.angeschossen.lands.api.nation.Nation;
-import org.bukkit.Bukkit;
 
 import java.util.HashMap;
 import java.util.List;
 
-public class PrintBasicInfo {
+public class PrintBal {
+    private static final String messagePath = "print-bal";
     ActionTargets targetType;
     Object target;
-    private static final String messagePath = "print-basic-info";
 
-    public PrintBasicInfo(Object target) {
+    public PrintBal(Object target) {
         this.target = target;
-        if(target instanceof Land) {
+        if (target instanceof Land) {
             this.targetType = ActionTargets.LAND;
-        } else if(target instanceof Area) {
+        } else if (target instanceof Area) {
             this.targetType = ActionTargets.AREA;
-        } else if(target instanceof Nation) {
+        } else if (target instanceof Nation) {
             this.targetType = ActionTargets.NATION;
         } else {
             this.targetType = ActionTargets.NULL;
@@ -30,7 +29,7 @@ public class PrintBasicInfo {
     }
 
     public String getResult() {
-        if(targetType == ActionTargets.NULL) {
+        if (targetType == ActionTargets.NULL) {
             return "你查找的对象不存在";
         }
 
@@ -38,10 +37,7 @@ public class PrintBasicInfo {
         HashMap<String, Object> args = new HashMap<String, Object>() {{
             put("target", getTypeName());
             put("name", getName());
-            put("owner", getOwner());
-            put("id", getId());
-            put("size", getSize());
-            put("member-amount", getMemberAmount());
+            put("bal", getBal());
         }};
 
         return MessageUtils.joinList(MessageUtils.parseVariables(messages, args));
@@ -73,58 +69,12 @@ public class PrintBasicInfo {
         }
     }
 
-    public int getId() {
+    public double getBal() {
         switch (this.targetType) {
             case LAND:
-                return ((Land) this.target).getId();
+                return ((Land) this.target).getBalance();
             case NATION:
-                return ((Nation) this.target).getId();
-            default:
-                return 0;
-        }
-    }
-
-    public int getSize() {
-        switch (this.targetType) {
-            case LAND:
-                return ((Land) this.target).getChunksAmount();
-            case NATION:
-                return ((Nation) this.target).getChunksAmount();
-            default:
-                return 0;
-        }
-    }
-
-    public int getMaxChunk() {
-        switch (this.targetType) {
-            case LAND:
-                return ((Land) this.target).getMaxChunks();
-            default:
-                return 0;
-        }
-    }
-
-    public String getOwner() {
-        switch (this.targetType) {
-            case LAND:
-                return Bukkit.getOfflinePlayer(((Land) this.target).getOwnerUID()).getName();
-            case NATION:
-                return Bukkit.getOfflinePlayer(((Nation) this.target).getOwnerUID()).getName();
-            case AREA:
-                return Bukkit.getOfflinePlayer(((Area) this.target).getOwnerUID()).getName();
-            default:
-                return null;
-        }
-    }
-
-    public int getMemberAmount() {
-        switch (this.targetType) {
-            case LAND:
-                return ((Land) this.target).getMembersAmount();
-            case NATION:
-                return ((Nation) this.target).getMembersAmount();
-            case AREA:
-                return ((Area) this.target).getTrustedPlayers().size();
+                return ((Nation) this.target).getBalance();
             default:
                 return 0;
         }

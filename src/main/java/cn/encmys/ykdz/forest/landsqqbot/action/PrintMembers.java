@@ -1,28 +1,29 @@
 package cn.encmys.ykdz.forest.landsqqbot.action;
 
 import cn.encmys.ykdz.forest.landsqqbot.enums.ActionTargets;
+import cn.encmys.ykdz.forest.landsqqbot.enums.MemberType;
 import cn.encmys.ykdz.forest.landsqqbot.manager.MessageConfigManager;
 import cn.encmys.ykdz.forest.landsqqbot.util.MessageUtils;
 import me.angeschossen.lands.api.land.Area;
 import me.angeschossen.lands.api.land.Land;
 import me.angeschossen.lands.api.nation.Nation;
-import org.bukkit.Bukkit;
 
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
-public class PrintBasicInfo {
-    ActionTargets targetType;
-    Object target;
-    private static final String messagePath = "print-basic-info";
+public class PrintMembers {
+    private static final String messagePath = "print-player-members";
+    private MemberType memberType;
+    private ActionTargets targetType;
+    private Object target;
 
-    public PrintBasicInfo(Object target) {
+    public PrintMembers(Object target, MemberType memberType) {
         this.target = target;
-        if(target instanceof Land) {
+        this.memberType = memberType;
+        if (target instanceof Land) {
             this.targetType = ActionTargets.LAND;
-        } else if(target instanceof Area) {
+        } else if (target instanceof Area) {
             this.targetType = ActionTargets.AREA;
-        } else if(target instanceof Nation) {
+        } else if (target instanceof Nation) {
             this.targetType = ActionTargets.NATION;
         } else {
             this.targetType = ActionTargets.NULL;
@@ -30,21 +31,19 @@ public class PrintBasicInfo {
     }
 
     public String getResult() {
-        if(targetType == ActionTargets.NULL) {
+        if (targetType == ActionTargets.NULL) {
             return "你查找的对象不存在";
         }
 
         List<String> messages = MessageConfigManager.getActionMessage(messagePath);
         HashMap<String, Object> args = new HashMap<String, Object>() {{
             put("target", getTypeName());
+            put("player-amount", getMembersAmount());
             put("name", getName());
-            put("owner", getOwner());
-            put("id", getId());
-            put("size", getSize());
-            put("member-amount", getMemberAmount());
+            put("player", getPlayerMembers());
         }};
 
-        return MessageUtils.joinList(MessageUtils.parseVariables(messages, args));
+        return MessageUtils.joinList(MessageUtils.parseVariables(messages, args, getMembersAmount()));
     }
 
     public String getTypeName() {
@@ -73,61 +72,29 @@ public class PrintBasicInfo {
         }
     }
 
-    public int getId() {
+    public ArrayList<UUID> getPlayerMembers() {
         switch (this.targetType) {
             case LAND:
-                return ((Land) this.target).getId();
+                return (ArrayList<UUID>) ((Land) this.target).getTrustedPlayers();
             case NATION:
-                return ((Nation) this.target).getId();
-            default:
-                return 0;
-        }
-    }
-
-    public int getSize() {
-        switch (this.targetType) {
-            case LAND:
-                return ((Land) this.target).getChunksAmount();
-            case NATION:
-                return ((Nation) this.target).getChunksAmount();
-            default:
-                return 0;
-        }
-    }
-
-    public int getMaxChunk() {
-        switch (this.targetType) {
-            case LAND:
-                return ((Land) this.target).getMaxChunks();
-            default:
-                return 0;
-        }
-    }
-
-    public String getOwner() {
-        switch (this.targetType) {
-            case LAND:
-                return Bukkit.getOfflinePlayer(((Land) this.target).getOwnerUID()).getName();
-            case NATION:
-                return Bukkit.getOfflinePlayer(((Nation) this.target).getOwnerUID()).getName();
+                return (ArrayList<UUID>) ((Nation) this.target).getTrustedPlayers();
             case AREA:
-                return Bukkit.getOfflinePlayer(((Area) this.target).getOwnerUID()).getName();
+                return (ArrayList<UUID>) ((Area) this.target).getTrustedPlayers();
             default:
                 return null;
         }
     }
 
-    public int getMemberAmount() {
+    public int getMembersAmount() {
         switch (this.targetType) {
             case LAND:
                 return ((Land) this.target).getMembersAmount();
             case NATION:
-                return ((Nation) this.target).getMembersAmount();
+                return ((Nation) this.target).getLands().size();
             case AREA:
                 return ((Area) this.target).getTrustedPlayers().size();
             default:
                 return 0;
         }
     }
-
 }

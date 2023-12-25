@@ -11,18 +11,18 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class LandsQQBot extends JavaPlugin {
-
     private static LandsQQBot plugin;
     private static LandsIntegration landAPI = null;
     private static MiraiBot bot;
 
     @Override
     public void onEnable() {
+        plugin = this;
+        landAPI = LandsIntegration.of(plugin);
+
         MainConfigManager.load();
         MessageConfigManager.load();
 
-        plugin = this;
-        landAPI = LandsIntegration.of(plugin);
         bot = MiraiBot.getBot(MainConfigManager.getConfig().getLong("bot.account"));
 
         Bukkit.getPluginManager().registerEvents(new LandsListener(), plugin);
