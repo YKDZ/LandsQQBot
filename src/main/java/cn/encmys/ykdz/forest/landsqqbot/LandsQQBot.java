@@ -1,7 +1,7 @@
 package cn.encmys.ykdz.forest.landsqqbot;
 
 import cn.encmys.ykdz.forest.landsqqbot.listener.LandsListener;
-import cn.encmys.ykdz.forest.landsqqbot.listener.MiraiListener;
+import cn.encmys.ykdz.forest.landsqqbot.listener.QQListener;
 import cn.encmys.ykdz.forest.landsqqbot.manager.MainConfigManager;
 import cn.encmys.ykdz.forest.landsqqbot.manager.MessageConfigManager;
 import me.angeschossen.lands.api.LandsIntegration;
@@ -26,7 +26,7 @@ public final class LandsQQBot extends JavaPlugin {
         bot = MiraiBot.getBot(MainConfigManager.getConfig().getLong("bot.account"));
 
         Bukkit.getPluginManager().registerEvents(new LandsListener(), plugin);
-        Bukkit.getPluginManager().registerEvents(new MiraiListener(), plugin);
+        Bukkit.getPluginManager().registerEvents(new QQListener(), plugin);
     }
 
     @Override

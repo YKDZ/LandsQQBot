@@ -3,12 +3,16 @@ package cn.encmys.ykdz.forest.landsqqbot.action;
 import cn.encmys.ykdz.forest.landsqqbot.enums.ActionTargets;
 import cn.encmys.ykdz.forest.landsqqbot.enums.MemberType;
 import cn.encmys.ykdz.forest.landsqqbot.manager.MessageConfigManager;
+import cn.encmys.ykdz.forest.landsqqbot.util.LandsUtils;
 import cn.encmys.ykdz.forest.landsqqbot.util.MessageUtils;
+import cn.encmys.ykdz.forest.landsqqbot.util.PlayerUtils;
 import me.angeschossen.lands.api.land.Area;
 import me.angeschossen.lands.api.land.Land;
 import me.angeschossen.lands.api.nation.Nation;
+import org.bukkit.entity.Player;
 
 import java.util.*;
+import java.util.spi.LocaleNameProvider;
 
 public class PrintMembers {
     private static final String messagePath = "print-player-members";
@@ -32,15 +36,15 @@ public class PrintMembers {
 
     public String getResult() {
         if (targetType == ActionTargets.NULL) {
-            return "你查找的对象不存在";
+            return MessageConfigManager.getErrorMessage("target-invalid");
         }
 
         List<String> messages = MessageConfigManager.getActionMessage(messagePath);
         HashMap<String, Object> args = new HashMap<String, Object>() {{
             put("target", getTypeName());
-            put("player-amount", getMembersAmount());
             put("name", getName());
-            put("player", getPlayerMembers());
+            put("members", getMembers());
+            put("members-amount", getMembersAmount());
         }};
 
         return MessageUtils.joinList(MessageUtils.parseVariables(messages, args, getMembersAmount()));
@@ -72,17 +76,25 @@ public class PrintMembers {
         }
     }
 
-    public ArrayList<UUID> getPlayerMembers() {
-        switch (this.targetType) {
+    public ArrayList<String> getMembers() {
+        switch (this.memberType) {
+            case PLAYER:
+                switch (this.targetType) {
+                    case LAND:
+                        return PlayerUtils.toNameList(((Land) this.target).getTrustedPlayers());
+                    case NATION:
+                        return PlayerUtils.toNameList(((Nation) this.target).getTrustedPlayers());
+                    case AREA:
+                        return PlayerUtils.toNameList(((Area) this.target).getTrustedPlayers());
+                    default:
+                        return null;
+                }
             case LAND:
-                return (ArrayList<UUID>) ((Land) this.target).getTrustedPlayers();
-            case NATION:
-                return (ArrayList<UUID>) ((Nation) this.target).getTrustedPlayers();
-            case AREA:
-                return (ArrayList<UUID>) ((Area) this.target).getTrustedPlayers();
-            default:
-                return null;
+                if (Objects.requireNonNull(this.targetType) == ActionTargets.NATION) {
+                    return LandsUtils.toNameList(((Nation) this.target).getLands());
+                }
         }
+        return null;
     }
 
     public int getMembersAmount() {

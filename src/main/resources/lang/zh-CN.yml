@@ -1,6 +1,7 @@
 args:
   land: "城镇"
   area: "子区域"
+  ally: "盟友"
   nation: "国家"
   player: "玩家"
   owner: "主人"
@@ -8,6 +9,7 @@ args:
   flag: "设置"
   action: "操作"
   value: "设置值"
+  member-type: "成员类型"
 
 command-prefix:
   - "$"
@@ -36,6 +38,8 @@ command-actions:
   friend:
     set-land-name: "设置名称"
     set-player-role: "设置他的职位"
+  group:
+    vote-party: "投票派对"
 
 messages:
   actions:
@@ -45,15 +49,21 @@ messages:
       - "- 所有者：{owner}"
       - "- 尺寸：{size}"
       - "- 成员数：{member-amount}"
+      - "- 所属国家：{nation}"
       - "(❁´◡`❁)"
     print-bal:
       - "{target} {name} 的金库余额为：{bal}"
       - "(❁´◡`❁)"
     print-player-members:
-      - "{target} {name} 有以下共 {member-amount} 个玩家成员："
-      - "@list-item- {player}"
+      - "{target} {name} 有以下共 {members-amount} 个 {member-type} 成员："
+      - "@list-item- {members}"
       - "(❁´◡`❁)"
     print-inbox:
       - "{target} {name} 的近十条日志："
       - "@list-item- {message}"
       - "(❁´◡`❁)"
+  placeholders:
+    none-nation: "没有所属国家"
+  error:
+    action-invalid: "你请求执行的操作不存在。"
+    target-invalid: "你查找的对象不存在。"

@@ -15,7 +15,7 @@ public class MessageUtils {
 
     public static List<String> parseVariables(List<String> list, HashMap<String, Object> map, int itemAmount) {
         List<String> result = new ArrayList<>();
-        HashMap<String, Object> lineMap = new HashMap<>(); // 用于存储变量的新 HashMap
+        HashMap<String, Object> lineMap = new HashMap<>();
 
         for (String line : list) {
             if (line.contains("@list-item")) {

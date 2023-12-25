@@ -10,6 +10,8 @@ import org.bukkit.Bukkit;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 public class PrintBasicInfo {
     ActionTargets targetType;
@@ -31,7 +33,7 @@ public class PrintBasicInfo {
 
     public String getResult() {
         if(targetType == ActionTargets.NULL) {
-            return "你查找的对象不存在";
+            return MessageConfigManager.getErrorMessage("target-invalid");
         }
 
         List<String> messages = MessageConfigManager.getActionMessage(messagePath);
@@ -42,6 +44,7 @@ public class PrintBasicInfo {
             put("id", getId());
             put("size", getSize());
             put("member-amount", getMemberAmount());
+            put("nation", getNation());
         }};
 
         return MessageUtils.joinList(MessageUtils.parseVariables(messages, args));
@@ -127,6 +130,22 @@ public class PrintBasicInfo {
                 return ((Area) this.target).getTrustedPlayers().size();
             default:
                 return 0;
+        }
+    }
+
+    public String getNation() {
+        switch (this.targetType) {
+            case LAND:
+                return Optional.ofNullable(((Land) this.target).getNation())
+                        .map(Nation::getName)
+                        .orElse(MessageConfigManager.getMessagePlaceholder("none-nation"));
+            case AREA:
+                return Optional.of(((Area) this.target).getLand())
+                        .map(Land::getNation)
+                        .map(Nation::getName)
+                        .orElse(MessageConfigManager.getMessagePlaceholder("none-nation"));
+            default:
+                return null;
         }
     }
 

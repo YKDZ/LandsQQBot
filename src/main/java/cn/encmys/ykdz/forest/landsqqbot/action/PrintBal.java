@@ -30,7 +30,7 @@ public class PrintBal {
 
     public String getResult() {
         if (targetType == ActionTargets.NULL) {
-            return "你查找的对象不存在";
+            return MessageConfigManager.getErrorMessage("target-invalid");
         }
 
         List<String> messages = MessageConfigManager.getActionMessage(messagePath);
