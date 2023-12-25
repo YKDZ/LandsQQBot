@@ -9,7 +9,8 @@ args:
   flag: "设置"
   action: "操作"
   value: "设置值"
-  member-type: "成员类型"
+  amount: "数量"
+  member_type: "成员类型"
 
 command-prefix:
   - "$"
@@ -54,16 +55,17 @@ messages:
     print-bal:
       - "{target} {name} 的金库余额为：{bal}"
       - "(❁´◡`❁)"
-    print-player-members:
-      - "{target} {name} 有以下共 {members-amount} 个 {member-type} 成员："
+    print-members:
+      - "{target} {name} 共有以下 {members-amount} 个 {member-type} 成员："
       - "@list-item- {members}"
       - "(❁´◡`❁)"
     print-inbox:
-      - "{target} {name} 的近十条日志："
-      - "@list-item- {message}"
+      - "{target} {name} 的最近 {amount} 条日志："
+      - "@list-item- {messages}"
       - "(❁´◡`❁)"
   placeholders:
     none-nation: "没有所属国家"
+    none-inbox: "没有日志信息"
   error:
     action-invalid: "你请求执行的操作不存在。"
     target-invalid: "你查找的对象不存在。"

@@ -46,20 +46,7 @@ public class QQCommandUtils {
     }
 
     public static MemberType toMemberType(String value) {
-        String land = MessageConfigManager.getArg("land");
-        String area = MessageConfigManager.getArg("area");
-        String player = MessageConfigManager.getArg("player");
-        String ally = MessageConfigManager.getArg("ally");
-        if(land.equals(value)) {
-            return MemberType.LAND;
-        } else if(area.equals(value)) {
-            return MemberType.AREA;
-        } else if(player.equals(value)) {
-            return MemberType.PLAYER;
-        } else if(ally.equals(value)) {
-            return MemberType.ALLY;
-        }
-        return null;
+        return MemberType.fromString(MapUtils.getKey(MessageConfigManager.getArgsMap(), value));
     }
 
 }

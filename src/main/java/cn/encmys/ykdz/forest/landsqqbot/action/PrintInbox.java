@@ -1,28 +1,26 @@
 package cn.encmys.ykdz.forest.landsqqbot.action;
 
 import cn.encmys.ykdz.forest.landsqqbot.enums.ActionTargets;
-import cn.encmys.ykdz.forest.landsqqbot.enums.MemberType;
 import cn.encmys.ykdz.forest.landsqqbot.manager.MessageConfigManager;
-import cn.encmys.ykdz.forest.landsqqbot.util.LandsUtils;
 import cn.encmys.ykdz.forest.landsqqbot.util.MessageUtils;
-import cn.encmys.ykdz.forest.landsqqbot.util.PlayerUtils;
+import me.angeschossen.lands.api.inbox.InboxMessage;
 import me.angeschossen.lands.api.land.Area;
 import me.angeschossen.lands.api.land.Land;
 import me.angeschossen.lands.api.nation.Nation;
-import org.bukkit.entity.Player;
 
-import java.util.*;
-import java.util.spi.LocaleNameProvider;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
-public class PrintMembers {
-    private static final String messagePath = "print-members";
-    private MemberType memberType;
+public class PrintInbox {
+    private static final String messagePath = "print-inbox";
+    private int amount;
     private ActionTargets targetType;
     private Object target;
 
-    public PrintMembers(Object target, MemberType memberType) {
+    public PrintInbox(Object target, int amount) {
         this.target = target;
-        this.memberType = memberType;
+        this.amount = amount;
         if (target instanceof Land) {
             this.targetType = ActionTargets.LAND;
         } else if (target instanceof Area) {
@@ -43,12 +41,11 @@ public class PrintMembers {
         HashMap<String, Object> args = new HashMap<String, Object>() {{
             put("target", getTypeName());
             put("name", getName());
-            put("member-type", getMemberType());
-            put("members", getMembers());
-            put("members-amount", getMembersAmount());
+            put("amount", getAmount());
+            put("messages", getMessages());
         }};
 
-        return MessageUtils.joinList(MessageUtils.parseVariables(messages, args, getMembersAmount()));
+        return MessageUtils.joinList(MessageUtils.parseVariables(messages, args, getAmount()));
     }
 
     public String getTypeName() {
@@ -77,42 +74,48 @@ public class PrintMembers {
         }
     }
 
-    public ArrayList<String> getMembers() {
-        switch (this.memberType) {
-            case PLAYER:
-                switch (this.targetType) {
-                    case LAND:
-                        return PlayerUtils.toNameList(((Land) this.target).getTrustedPlayers());
-                    case NATION:
-                        return PlayerUtils.toNameList(((Nation) this.target).getTrustedPlayers());
-                    case AREA:
-                        return PlayerUtils.toNameList(((Area) this.target).getTrustedPlayers());
-                    default:
-                        return null;
-                }
-            case LAND:
-                if (Objects.requireNonNull(this.targetType) == ActionTargets.NATION) {
-                    return LandsUtils.toNameList(((Nation) this.target).getLands());
-                }
-        }
-        return null;
-    }
-
-    public int getMembersAmount() {
+    public ArrayList<String> getMessages() {
+        ArrayList<String> messages = new ArrayList<>();
+        List<InboxMessage> inbox = null;
         switch (this.targetType) {
             case LAND:
-                return ((Land) this.target).getMembersAmount();
+                inbox = (List<InboxMessage>) ((Land) this.target).getInbox();
+                break;
             case NATION:
-                return ((Nation) this.target).getLands().size();
+                inbox = (List<InboxMessage>) ((Land) this.target).getInbox();
+                break;
             case AREA:
-                return ((Area) this.target).getTrustedPlayers().size();
+                inbox = (List<InboxMessage>) ((Land) this.target).getInbox();
+                break;
             default:
-                return 0;
+                inbox = null;
+                break;
         }
+        if (inbox != null) {
+            for(int i = 0; i < getAmount(); i++) {
+                messages.add(inbox.get(i).getTextWithDate(null));
+            }
+        }
+        return messages;
     }
 
-    public String getMemberType() {
-        return MessageConfigManager.getArg(memberType.toString().toLowerCase());
+    public int getAmount() {
+        int has;
+        switch (this.targetType) {
+            case LAND:
+                has = ((Land) this.target).getInbox().size();
+                break;
+            case NATION:
+                has = ((Nation) this.target).getInbox().size();
+                break;
+            case AREA:
+                has = ((Area) this.target).getLand().getInbox().size();
+                break;
+            default:
+                has = 0;
+                break;
+        }
+        return Math.min(has, amount);
     }
 
 }

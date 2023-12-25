@@ -19,6 +19,7 @@ public class MessageUtils {
 
         for (String line : list) {
             if (line.contains("@list-item")) {
+                line = line.replace("@list-item", "");
                 for(int i = 0; i < itemAmount; i++) {
                     for(String var : extractVariables(line)) {
                         Object value = map.get(var);

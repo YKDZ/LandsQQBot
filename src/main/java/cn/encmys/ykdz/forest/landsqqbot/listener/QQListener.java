@@ -3,6 +3,7 @@ package cn.encmys.ykdz.forest.landsqqbot.listener;
 import cn.encmys.ykdz.forest.landsqqbot.LandsQQBot;
 import cn.encmys.ykdz.forest.landsqqbot.action.PrintBal;
 import cn.encmys.ykdz.forest.landsqqbot.action.PrintBasicInfo;
+import cn.encmys.ykdz.forest.landsqqbot.action.PrintInbox;
 import cn.encmys.ykdz.forest.landsqqbot.action.PrintMembers;
 import cn.encmys.ykdz.forest.landsqqbot.enums.MemberType;
 import cn.encmys.ykdz.forest.landsqqbot.enums.QQCommandArgs;
@@ -79,6 +80,20 @@ public class QQListener implements Listener {
                         action = new PrintMembers(landAPI.getNationByName((String) args.get(QQCommandArgs.NATION)), (MemberType) args.get(QQCommandArgs.MEMBER_TYPE));
                     } else if (args.get(QQCommandArgs.AREA) != null) {
                         action = new PrintMembers(landAPI.getNationByName((String) args.get(QQCommandArgs.AREA)), (MemberType) args.get(QQCommandArgs.MEMBER_TYPE));
+                    }
+                    if (action != null) {
+                        sender.sendMessage(action.getResult());
+                    }
+                    break;
+                }
+                case "print-inbox": {
+                    PrintInbox action = null;
+                    if (args.get(QQCommandArgs.LAND) != null) {
+                        action = new PrintInbox(landAPI.getLandByName((String) args.get(QQCommandArgs.LAND)), Integer.parseInt((String) args.get(QQCommandArgs.AMOUNT)));
+                    } else if (args.get(QQCommandArgs.NATION) != null) {
+                        action = new PrintInbox(landAPI.getNationByName((String) args.get(QQCommandArgs.NATION)), Integer.parseInt((String) args.get(QQCommandArgs.AMOUNT)));
+                    } else if (args.get(QQCommandArgs.AREA) != null) {
+                        action = new PrintInbox(landAPI.getNationByName((String) args.get(QQCommandArgs.AREA)), Integer.parseInt((String) args.get(QQCommandArgs.AMOUNT)));
                     }
                     if (action != null) {
                         sender.sendMessage(action.getResult());

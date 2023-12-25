@@ -8,7 +8,8 @@ public enum QQCommandArgs {
     ROLE,
     FLAG,
     ACTION,
-    MEMBER_TYPE;
+    MEMBER_TYPE,
+    AMOUNT;
 
     public static QQCommandArgs fromString(String name) {
         for (QQCommandArgs c : QQCommandArgs.values()) {
