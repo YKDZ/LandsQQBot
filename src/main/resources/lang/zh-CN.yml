@@ -66,6 +66,7 @@ messages:
   placeholders:
     none-nation: "没有所属国家"
     none-inbox: "没有日志信息"
+    none-bal: "没有金库余额"
   error:
     action-invalid: "你请求执行的操作不存在。"
     target-invalid: "你查找的对象不存在。"
