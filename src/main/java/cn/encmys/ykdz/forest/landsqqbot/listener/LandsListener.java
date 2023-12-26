@@ -10,6 +10,7 @@ public class LandsListener implements Listener {
     public void onPlayerLevelLand(PlayerLeaveLandEvent e) {
 
     }
+
     @EventHandler
     public void onLandChat(LandChatEvent e) {
 
