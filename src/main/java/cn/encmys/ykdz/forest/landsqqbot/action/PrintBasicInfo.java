@@ -1,5 +1,7 @@
 package cn.encmys.ykdz.forest.landsqqbot.action;
 
+import cn.encmys.ykdz.forest.landsqqbot.api.action.Action;
+import cn.encmys.ykdz.forest.landsqqbot.api.action.PrintAction;
 import cn.encmys.ykdz.forest.landsqqbot.api.target.Target;
 import cn.encmys.ykdz.forest.landsqqbot.manager.MessageConfigManager;
 import cn.encmys.ykdz.forest.landsqqbot.target.AreaTarget;
@@ -13,7 +15,7 @@ import me.angeschossen.lands.api.nation.Nation;
 import java.util.HashMap;
 import java.util.List;
 
-public class PrintBasicInfo {
+public class PrintBasicInfo implements PrintAction {
     private static final String messagePath = "print-basic-info";
     Target target;
 
@@ -39,8 +41,8 @@ public class PrintBasicInfo {
             put("size", target.getSize());
             put("member-amount", target.getMemberAmount());
             put("nation", target.getNation());
+            put("capital", target.getCapital());
         }};
-
         return MessageUtils.joinList(MessageUtils.parseVariables(messages, args));
     }
 

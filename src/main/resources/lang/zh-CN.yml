@@ -10,7 +10,7 @@ args:
   action: "操作"
   value: "设置值"
   amount: "数量"
-  member_type: "成员类型"
+  member-type: "成员类型"
 
 command-prefix:
   - "$"
@@ -51,12 +51,13 @@ messages:
       - "- 尺寸：{size}"
       - "- 成员数：{member-amount}"
       - "- 所属国家：{nation}"
+      - "- 首都：{capital}"
       - "(❁´◡`❁)"
     print-bal:
       - "{target} {name} 的金库余额为：{bal}"
       - "(❁´◡`❁)"
     print-members:
-      - "{target} {name} 共有以下 {members-amount} 个 {member-type} 成员："
+      - "{target} {name} 共有以下 {member-amount} 个 {member-type} 成员："
       - "@list-item- {members}"
       - "(❁´◡`❁)"
     print-inbox:
@@ -69,6 +70,8 @@ messages:
     none-bal: "没有金库余额"
     none-size: "没有尺寸信息"
     none-id: "没有 ID 信息"
+    none-members: "没有指定类型的成员"
+    none-capital: "没有首都"
   error:
     action-invalid: "你请求执行的操作不存在。"
     target-invalid: "你查找的对象不存在。"

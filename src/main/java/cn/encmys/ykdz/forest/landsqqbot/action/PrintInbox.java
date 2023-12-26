@@ -1,5 +1,7 @@
 package cn.encmys.ykdz.forest.landsqqbot.action;
 
+import cn.encmys.ykdz.forest.landsqqbot.api.action.Action;
+import cn.encmys.ykdz.forest.landsqqbot.api.action.PrintAction;
 import cn.encmys.ykdz.forest.landsqqbot.api.target.Target;
 import cn.encmys.ykdz.forest.landsqqbot.manager.MessageConfigManager;
 import cn.encmys.ykdz.forest.landsqqbot.target.AreaTarget;
@@ -13,7 +15,7 @@ import me.angeschossen.lands.api.nation.Nation;
 import java.util.HashMap;
 import java.util.List;
 
-public class PrintInbox {
+public class PrintInbox implements PrintAction {
     private static final String messagePath = "print-inbox";
     private Target target;
 
@@ -38,7 +40,6 @@ public class PrintInbox {
             put("amount", target.getInboxMessageAmount());
             put("messages", target.getInboxMessages());
         }};
-
         return MessageUtils.joinList(MessageUtils.parseVariables(messages, args, (int) target.getInboxMessageAmount()));
     }
 

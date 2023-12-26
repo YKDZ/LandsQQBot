@@ -12,6 +12,7 @@ public enum QQCommandArgs {
     AMOUNT;
 
     public static QQCommandArgs fromString(String name) {
+        name = name.replaceAll("-", "_");
         for (QQCommandArgs c : QQCommandArgs.values()) {
             if (c.name().equalsIgnoreCase(name)) {
                 return c;

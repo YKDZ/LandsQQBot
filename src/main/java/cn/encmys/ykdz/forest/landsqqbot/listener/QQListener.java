@@ -5,8 +5,11 @@ import cn.encmys.ykdz.forest.landsqqbot.action.PrintBal;
 import cn.encmys.ykdz.forest.landsqqbot.action.PrintBasicInfo;
 import cn.encmys.ykdz.forest.landsqqbot.action.PrintInbox;
 import cn.encmys.ykdz.forest.landsqqbot.action.PrintMembers;
+import cn.encmys.ykdz.forest.landsqqbot.api.action.Action;
+import cn.encmys.ykdz.forest.landsqqbot.enums.Actions;
 import cn.encmys.ykdz.forest.landsqqbot.enums.MemberType;
 import cn.encmys.ykdz.forest.landsqqbot.enums.QQCommandArgs;
+import cn.encmys.ykdz.forest.landsqqbot.factory.ActionFactory;
 import cn.encmys.ykdz.forest.landsqqbot.manager.MessageConfigManager;
 import cn.encmys.ykdz.forest.landsqqbot.util.MapUtils;
 import cn.encmys.ykdz.forest.landsqqbot.util.QQCommandUtils;
@@ -19,9 +22,9 @@ import org.bukkit.event.Listener;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class QQListener implements Listener {
-    private final LandsIntegration landAPI = LandsQQBot.getLandAPI();
     private final MiraiBot bot = LandsQQBot.getBot();
     @EventHandler
     public void onFriendMessageReceive(MiraiFriendMessageEvent e) {
@@ -35,8 +38,8 @@ public class QQListener implements Listener {
         if(QQCommandUtils.isQQCommand(message)) {
 
             HashMap<QQCommandArgs, Object> args = QQCommandUtils.parseQQCommand(message);
-            Map<String, Object> actions = MessageConfigManager.getActions();
-            String actionKey = MapUtils.getKey(actions, args.get(QQCommandArgs.ACTION));
+            Actions actionKey = Actions.fromString(MapUtils.getKey(MessageConfigManager.getActions(), args.get(QQCommandArgs.ACTION)));
+            Action action = null;
 
             sender.sendMessage(args.toString());
 
@@ -45,63 +48,17 @@ public class QQListener implements Listener {
                 return;
             }
 
-            switch (actionKey) {
-                case "print-basic-info": {
-                    PrintBasicInfo action = null;
-                    if (args.get(QQCommandArgs.LAND) != null) {
-                        action = new PrintBasicInfo(landAPI.getLandByName((String) args.get(QQCommandArgs.LAND)));
-                    } else if (args.get(QQCommandArgs.NATION) != null) {
-                        action = new PrintBasicInfo(landAPI.getNationByName((String) args.get(QQCommandArgs.NATION)));
-                    } else if (args.get(QQCommandArgs.AREA) != null) {
-                        action = new PrintBasicInfo(landAPI.getNationByName((String) args.get(QQCommandArgs.AREA)));
-                    }
-                    if (action != null) {
-                        sender.sendMessage(action.getResult());
-                    }
-                    break;
-                }
-                case "print-bal": {
-                    PrintBal action = null;
-                    if (args.get(QQCommandArgs.LAND) != null) {
-                        action = new PrintBal(landAPI.getLandByName((String) args.get(QQCommandArgs.LAND)));
-                    } else if (args.get(QQCommandArgs.NATION) != null) {
-                        action = new PrintBal(landAPI.getNationByName((String) args.get(QQCommandArgs.NATION)));
-                    }
-                    if (action != null) {
-                        sender.sendMessage(action.getResult());
-                    }
-                    break;
-                }
-                case "print-members": {
-                    PrintMembers action = null;
-                    if (args.get(QQCommandArgs.LAND) != null) {
-                        action = new PrintMembers(landAPI.getLandByName((String) args.get(QQCommandArgs.LAND)), (MemberType) args.get(QQCommandArgs.MEMBER_TYPE));
-                    } else if (args.get(QQCommandArgs.NATION) != null) {
-                        action = new PrintMembers(landAPI.getNationByName((String) args.get(QQCommandArgs.NATION)), (MemberType) args.get(QQCommandArgs.MEMBER_TYPE));
-                    } else if (args.get(QQCommandArgs.AREA) != null) {
-                        action = new PrintMembers(landAPI.getNationByName((String) args.get(QQCommandArgs.AREA)), (MemberType) args.get(QQCommandArgs.MEMBER_TYPE));
-                    }
-                    if (action != null) {
-                        sender.sendMessage(action.getResult());
-                    }
-                    break;
-                }
-                case "print-inbox": {
-                    PrintInbox action = null;
-                    if (args.get(QQCommandArgs.LAND) != null) {
-                        action = new PrintInbox(landAPI.getLandByName((String) args.get(QQCommandArgs.LAND)), Integer.parseInt((String) args.get(QQCommandArgs.AMOUNT)));
-                    } else if (args.get(QQCommandArgs.NATION) != null) {
-                        action = new PrintInbox(landAPI.getNationByName((String) args.get(QQCommandArgs.NATION)), Integer.parseInt((String) args.get(QQCommandArgs.AMOUNT)));
-                    } else if (args.get(QQCommandArgs.AREA) != null) {
-                        action = new PrintInbox(landAPI.getNationByName((String) args.get(QQCommandArgs.AREA)), Integer.parseInt((String) args.get(QQCommandArgs.AMOUNT)));
-                    }
-                    if (action != null) {
-                        sender.sendMessage(action.getResult());
-                    }
-                    break;
-                }
+            if(actionKey == Actions.PRINT_BAL || actionKey == Actions.PRINT_BASIC_INFO) {
+                action = ActionFactory.build(actionKey, args.get(QQCommandArgs.LAND));
+            } else if(actionKey == Actions.PRINT_INBOX) {
+                action = ActionFactory.build(actionKey, args.get(QQCommandArgs.LAND), (int) args.get(QQCommandArgs.AMOUNT));
+            } else if(actionKey == Actions.PRINT_MEMBERS) {
+                action = ActionFactory.build(actionKey, args.get(QQCommandArgs.LAND), (MemberType) args.get(QQCommandArgs.MEMBER_TYPE));
             }
 
+            if (action != null) {
+                sender.sendMessage(action.getResult());
+            }
         }
     }
 }

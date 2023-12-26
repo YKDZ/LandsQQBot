@@ -1,5 +1,6 @@
 package cn.encmys.ykdz.forest.landsqqbot.action;
 
+import cn.encmys.ykdz.forest.landsqqbot.api.action.PrintAction;
 import cn.encmys.ykdz.forest.landsqqbot.api.target.Target;
 import cn.encmys.ykdz.forest.landsqqbot.enums.MemberType;
 import cn.encmys.ykdz.forest.landsqqbot.manager.MessageConfigManager;
@@ -14,7 +15,7 @@ import me.angeschossen.lands.api.nation.Nation;
 import java.util.HashMap;
 import java.util.List;
 
-public class PrintMembers {
+public class PrintMembers implements PrintAction {
     private static final String messagePath = "print-members";
     private Target target;
 
@@ -36,10 +37,9 @@ public class PrintMembers {
             put("target", target.getTypeName());
             put("name", target.getName());
             put("member-type", target.getMemberType());
+            put("member-amount", target.getMemberAmount());
             put("members", target.getMembers());
-            put("members-amount", target.getMemberAmount());
         }};
-
         return MessageUtils.joinList(MessageUtils.parseVariables(messages, args, target.getMemberAmount()));
     }
 
